@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,6 +25,8 @@ public class NewCar extends Activity {
     EditText year;
     EditText engine;
     ImageView carImage;
+    Button saveCarButton;
+    Button uploadImageButton;
 
     final int GET_FROM_GALLERY = 1;
     public static Bitmap image;
@@ -38,9 +41,9 @@ public class NewCar extends Activity {
         year = (EditText) findViewById(R.id.yearEdit);
         engine = (EditText) findViewById(R.id.engineEdit);
         carImage = (ImageView) findViewById(R.id.carImage);
-        Button saveCarButton = (Button) findViewById(R.id.saveCarButton);
+        saveCarButton = (Button) findViewById(R.id.saveCarButton);
+        uploadImageButton = (Button) findViewById(R.id.uploadImageButton);
 
-        Button uploadImageButton = (Button) findViewById(R.id.uploadImageButton);
         uploadImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -48,13 +51,18 @@ public class NewCar extends Activity {
             }
         });
 
+        Log.d("saving", "funguje to?");
+
         saveCarButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d("saving", "clickSave");
                 if (saveToDb(brand.getText().toString(), model.getText().toString(), year.getText().toString(), engine.getText().toString())) {
                     Toast.makeText(NewCar.this, "Uloženo", Toast.LENGTH_SHORT).show();
+                    Log.d("saving", "OK");
                     startActivity(new Intent(NewCar.this, MainActivity.class));
                 } else {
+                    Log.d("saving", "chyba");
                     Toast.makeText(NewCar.this, "Chyba", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -91,7 +99,6 @@ public class NewCar extends Activity {
         // Create a new map of values, where column names are the keys
 
 //        int deletedRows = db.delete(CarTable.TABLE_NAME, null, null);
-//        db.execSQL("DROP TABLE " + CarTable.TABLE_NAME);
 
         ContentValues values = new ContentValues();
         values.put(CarTable.COLUMN_NAME_BRAND, brand);
@@ -102,6 +109,7 @@ public class NewCar extends Activity {
 
         // Insert the new row, returning the primary key value of the new row
         long neWid = db.insert(CarTable.TABLE_NAME, null, values);
+        Log.d("saving", "savetoDB");
 
         return true;
     }
