@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -30,7 +31,8 @@ public class ShowCarsActivity extends Activity {
                 CarTable.COLUMN_NAME_BRAND,
                 CarTable.COLUMN_NAME_MODEL,
                 CarTable.COLUMN_NAME_YEAR,
-                CarTable.COLUMN_NAME_ENGINE
+                CarTable.COLUMN_NAME_ENGINE,
+                CarTable.COLUMN_NAME_IMAGE
         };
         // How you want the results sorted in the resulting Cursor
         String sortOrder =
@@ -51,7 +53,8 @@ public class ShowCarsActivity extends Activity {
             String model = cursor.getString(cursor.getColumnIndexOrThrow(CarTable.COLUMN_NAME_MODEL));
             String year = cursor.getString(cursor.getColumnIndexOrThrow(CarTable.COLUMN_NAME_YEAR));
             String engine = cursor.getString(cursor.getColumnIndexOrThrow(CarTable.COLUMN_NAME_ENGINE));
-            scoreRows.add(new Car(itemId, brand, model, year, engine));
+            byte[] imgByte = cursor.getBlob(cursor.getColumnIndexOrThrow(CarTable.COLUMN_NAME_IMAGE));
+            scoreRows.add(new Car(itemId, brand, model, year, engine, DbBitmapUtility.getImage(imgByte)));
         }
         cursor.close();
         for (int i = 0; i < scoreRows.size(); i++) {
@@ -59,7 +62,10 @@ public class ShowCarsActivity extends Activity {
             TableRow tr1 = new TableRow(this);
             tr1.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.FILL_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
 
-            Log.d("ahoj", row.brand);
+            ImageView image = new ImageView(this);
+            image.setImageBitmap(row.image);
+            tr1.addView(image);
+
             TextView brand = new TextView(this);
             brand.setText(row.brand);
             tr1.addView(brand);

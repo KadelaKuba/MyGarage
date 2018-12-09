@@ -16,29 +16,42 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
+            <ImageView
+                android:id="@+id/carImage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:src="@tools:sample/avatars" />
+
             <TextView
                 android:id="@+id/brandText"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="TextView" />
+                android:paddingRight="5dp"
+                android:text="Značka"
+                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large" />
 
             <TextView
                 android:id="@+id/modelText"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="TextView" />
+                android:paddingRight="5dp"
+                android:text="Model"
+                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large" />
 
             <TextView
                 android:id="@+id/YearText"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="TextView" />
+                android:paddingRight="5dp"
+                android:text="Rok výroby"
+                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large" />
 
             <TextView
                 android:id="@+id/engineText"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="TextView" />
+                android:text="Typ motoru"
+                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large" />
         </TableRow>
 
     </TableLayout>

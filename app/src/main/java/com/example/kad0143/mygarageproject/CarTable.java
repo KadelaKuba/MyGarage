@@ -8,4 +8,5 @@ public class CarTable implements BaseColumns {
     public static final String COLUMN_NAME_MODEL = "model";
     public static final String COLUMN_NAME_YEAR = "year";
     public static final String COLUMN_NAME_ENGINE = "engine";
+    public static final String COLUMN_NAME_IMAGE = "image";
 }

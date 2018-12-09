@@ -4,11 +4,18 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 public class NewCar extends Activity {
 
@@ -16,6 +23,10 @@ public class NewCar extends Activity {
     EditText model;
     EditText year;
     EditText engine;
+    ImageView carImage;
+
+    final int GET_FROM_GALLERY = 1;
+    public static Bitmap image;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +37,17 @@ public class NewCar extends Activity {
         model = (EditText) findViewById(R.id.modelEdit);
         year = (EditText) findViewById(R.id.yearEdit);
         engine = (EditText) findViewById(R.id.engineEdit);
+        carImage = (ImageView) findViewById(R.id.carImage);
         Button saveCarButton = (Button) findViewById(R.id.saveCarButton);
+
+        Button uploadImageButton = (Button) findViewById(R.id.uploadImageButton);
+        uploadImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivityForResult(new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI), GET_FROM_GALLERY);
+            }
+        });
+
         saveCarButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -40,6 +61,29 @@ public class NewCar extends Activity {
         });
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+
+        //Detects request codes
+        if (requestCode == GET_FROM_GALLERY && resultCode == Activity.RESULT_OK) {
+            Uri selectedImage = data.getData();
+            Bitmap bitmap = null;
+            try {
+                bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
+                carImage.setImageBitmap(bitmap);
+                image = bitmap;
+            } catch (FileNotFoundException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+    }
+
     private boolean saveToDb(String brand, String model, String year, String engine) {
         DbHelper mDbHelper = new DbHelper(this);
         // Gets the data repository in write mode
@@ -47,12 +91,15 @@ public class NewCar extends Activity {
         // Create a new map of values, where column names are the keys
 
 //        int deletedRows = db.delete(CarTable.TABLE_NAME, null, null);
+//        db.execSQL("DROP TABLE " + CarTable.TABLE_NAME);
 
         ContentValues values = new ContentValues();
         values.put(CarTable.COLUMN_NAME_BRAND, brand);
         values.put(CarTable.COLUMN_NAME_MODEL, model);
         values.put(CarTable.COLUMN_NAME_YEAR, year);
         values.put(CarTable.COLUMN_NAME_ENGINE, engine);
+        values.put(CarTable.COLUMN_NAME_IMAGE, DbBitmapUtility.getBytes(image));
+
         // Insert the new row, returning the primary key value of the new row
         long neWid = db.insert(CarTable.TABLE_NAME, null, values);
 

@@ -28,5 +28,13 @@ public class MainActivity extends Activity {
                 startActivity(new Intent(MainActivity.this, ShowCarsActivity.class));
             }
         });
+
+        Button settingsButton = (Button) findViewById(R.id.settingsButton);
+        settingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+            }
+        });
     }
 }

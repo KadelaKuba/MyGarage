@@ -6,17 +6,18 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DbHelper extends SQLiteOpenHelper {
     private static final String SQL_CREATE_ENTRIES =
-            "CREATE TABLE " + CarTable.TABLE_NAME + " (" +
+            "CREATE TABLE IF NOT EXISTS " + CarTable.TABLE_NAME + " (" +
                     CarTable._ID + " INTEGER PRIMARY KEY," +
                     CarTable.COLUMN_NAME_BRAND + " TEXT," +
                     CarTable.COLUMN_NAME_MODEL + " INTEGER," +
                     CarTable.COLUMN_NAME_YEAR + " INTEGER," +
-                    CarTable.COLUMN_NAME_ENGINE + " INTEGER)";
+                    CarTable.COLUMN_NAME_ENGINE + " INTEGER," +
+                    CarTable.COLUMN_NAME_IMAGE + " BLOB)";
 
     private static final String SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " + "TABLE_NAME";
 
     // Pokud se změní schéma databáze, musí se změnit verze
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 4;
     public static final String DATABASE_NAME = "FeedReader.db";
 
     public DbHelper(Context context) {
