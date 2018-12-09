@@ -17,7 +17,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".NewCar" />
-        <activity android:name=".SettingsActivity"></activity>
+        <activity android:name=".SettingsActivity" />
+        <activity android:name=".CarDetailActivity"></activity>
     </application>
 
 </manifest>
