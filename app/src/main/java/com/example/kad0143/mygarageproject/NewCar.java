@@ -6,17 +6,26 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.Toast;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class NewCar extends Activity {
 
@@ -31,6 +40,9 @@ public class NewCar extends Activity {
     final int GET_FROM_GALLERY = 1;
     public static Bitmap image;
 
+    public static ArrayList<CarModel> carModels;
+    public static ArrayList<String> modelList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +55,11 @@ public class NewCar extends Activity {
         carImage = (ImageView) findViewById(R.id.carImage);
         saveCarButton = (Button) findViewById(R.id.saveCarButton);
         uploadImageButton = (Button) findViewById(R.id.uploadImageButton);
+
+        modelList = new ArrayList<String>();
+        carModels = new ArrayList<CarModel>();
+
+        new DownloadXmlTask().execute("https://raw.githubusercontent.com/matthlavacka/car-list/master/car-list.json");
 
         uploadImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -112,5 +129,76 @@ public class NewCar extends Activity {
         Log.d("saving", "savetoDB");
 
         return true;
+    }
+
+
+    private class DownloadXmlTask extends AsyncTask<String, String, String> {
+
+        private String TAG = MainActivity.class.getSimpleName();
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            HttpHandler sh = new HttpHandler();
+            // Making a request to url and getting response
+            String url = "https://raw.githubusercontent.com/matthlavacka/car-list/master/car-list.json";
+            String jsonStr = sh.makeServiceCall(url);
+
+            Log.e(TAG, "Response from url: " + jsonStr);
+
+            if (jsonStr != null) {
+                try {
+                    Log.d("kadela", jsonStr);
+                    JSONArray jsonArray = new JSONArray(jsonStr);
+
+                    // looping through All Contacts
+
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject c = jsonArray.getJSONObject(i);
+                        String brand = c.getString("brand");
+
+                        // Phone node is JSON Object
+                        JSONArray models = c.getJSONArray("models");
+                        for (int j = 0; j < models.length(); j++) {
+                            modelList.add(models.getString(j));
+                        }
+
+                        CarModel carModel = new CarModel(brand, modelList);
+                        carModels.add(carModel);
+
+                        Log.d("sizeKadela", String.valueOf(carModels.size()));
+                    }
+                } catch (final JSONException e) {
+                    Log.e(TAG, "Json parsing error: " + e.getMessage());
+
+                }
+
+            } else {
+                Log.e(TAG, "Couldn't get json from server.");
+            }
+
+            return null;
+
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            Spinner spinner = (Spinner) findViewById(R.id.spinner);
+
+            List<String> brands = new ArrayList<String>();
+            for (CarModel carModel : carModels) {
+                brands.add(carModel.brand);
+            }
+
+            ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getBaseContext(), android.R.layout.simple_spinner_item, brands);
+            dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
+            spinner.setAdapter(dataAdapter);
+        }
     }
 }

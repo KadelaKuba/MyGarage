@@ -64,7 +64,6 @@ public class MainActivity extends Activity {
 //            }
 //        });
 
-        new DownloadXmlTask().execute("https://raw.githubusercontent.com/matthlavacka/car-list/master/car-list.json");
     }
 
     private void renderListView() {
