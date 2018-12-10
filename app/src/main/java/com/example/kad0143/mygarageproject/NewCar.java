@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -41,7 +42,6 @@ public class NewCar extends Activity {
     public static Bitmap image;
 
     public static ArrayList<CarModel> carModels;
-    public static ArrayList<String> modelList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +56,6 @@ public class NewCar extends Activity {
         saveCarButton = (Button) findViewById(R.id.saveCarButton);
         uploadImageButton = (Button) findViewById(R.id.uploadImageButton);
 
-        modelList = new ArrayList<String>();
         carModels = new ArrayList<CarModel>();
 
         new DownloadXmlTask().execute("https://raw.githubusercontent.com/matthlavacka/car-list/master/car-list.json");
@@ -135,6 +134,7 @@ public class NewCar extends Activity {
     private class DownloadXmlTask extends AsyncTask<String, String, String> {
 
         private String TAG = MainActivity.class.getSimpleName();
+        public ArrayList<String> modelList;
 
         @Override
         protected void onPreExecute() {
@@ -163,6 +163,7 @@ public class NewCar extends Activity {
 
                         // Phone node is JSON Object
                         JSONArray models = c.getJSONArray("models");
+                        modelList = new ArrayList<String>();
                         for (int j = 0; j < models.length(); j++) {
                             modelList.add(models.getString(j));
                         }
@@ -189,9 +190,10 @@ public class NewCar extends Activity {
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
 
-            Spinner spinner = (Spinner) findViewById(R.id.spinner);
+            final Spinner spinner = (Spinner) findViewById(R.id.spinner);
+            final Spinner spinner2 = (Spinner) findViewById(R.id.spinner2);
 
-            List<String> brands = new ArrayList<String>();
+            final List<String> brands = new ArrayList<String>();
             for (CarModel carModel : carModels) {
                 brands.add(carModel.brand);
             }
@@ -199,6 +201,23 @@ public class NewCar extends Activity {
             ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getBaseContext(), android.R.layout.simple_spinner_item, brands);
             dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
             spinner.setAdapter(dataAdapter);
+
+            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                    CarModel carModel = carModels.get(position);
+
+                    ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getBaseContext(), android.R.layout.simple_spinner_item, carModel.models);
+                    dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
+                    spinner2.setAdapter(dataAdapter);
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parentView) {
+                    // your code here
+                }
+
+            });
         }
     }
 }
