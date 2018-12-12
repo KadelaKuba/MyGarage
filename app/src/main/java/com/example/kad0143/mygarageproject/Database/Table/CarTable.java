@@ -1,4 +1,4 @@
-package com.example.kad0143.mygarageproject.Database;
+package com.example.kad0143.mygarageproject.Database.Table;
 
 import android.provider.BaseColumns;
 

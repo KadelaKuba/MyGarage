@@ -22,8 +22,8 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.kad0143.mygarageproject.Entity.BrandWithModelsEntity;
-import com.example.kad0143.mygarageproject.Database.CarTable;
-import com.example.kad0143.mygarageproject.Database.SQLiteHelper;
+import com.example.kad0143.mygarageproject.Database.Table.CarTable;
+import com.example.kad0143.mygarageproject.Database.Helper.SQLiteHelper;
 import com.example.kad0143.mygarageproject.Database.DbBitmapUtility;
 import com.example.kad0143.mygarageproject.Network.HttpHandler;
 import com.example.kad0143.mygarageproject.R;
@@ -88,6 +88,7 @@ public class NewCarActivity extends Activity {
                 long carSavedToDb;
 
                 if (isOfflineMode) {
+                    // TODO JK přidat validaci pro ostatní pole
                     if (TextUtils.isEmpty(year.getText())) {
                         year.setError("Rok výroby je povinný údaj!");
                     } else if (TextUtils.isEmpty(engine.getText())) {

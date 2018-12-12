@@ -5,23 +5,28 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.kad0143.mygarageproject.Entity.CarEntity;
-import com.example.kad0143.mygarageproject.Database.CarTable;
-import com.example.kad0143.mygarageproject.Database.SQLiteHelper;
+import com.example.kad0143.mygarageproject.Database.Table.CarTable;
+import com.example.kad0143.mygarageproject.Database.Helper.SQLiteHelper;
 import com.example.kad0143.mygarageproject.Database.DbBitmapUtility;
 import com.example.kad0143.mygarageproject.R;
 
 public class CarDetailActivity extends Activity {
 
-    private TextView carBrandDetail;
-    private TextView carModelDetail;
-    private TextView carYearDetail;
-    private TextView carEngineDetail;
-    private ImageView carImageDetail;
+    TextView carBrandDetail;
+    TextView carModelDetail;
+    TextView carYearDetail;
+    TextView carEngineDetail;
+    ImageView carImageDetail;
+    Button carInfomationsButton;
+
     private CarEntity car;
+    private Long entryId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,13 +38,23 @@ public class CarDetailActivity extends Activity {
         carYearDetail = (TextView) findViewById(R.id.carYearDetail);
         carEngineDetail = (TextView) findViewById(R.id.carEngineDetail);
         carImageDetail = (ImageView) findViewById(R.id.carImageDetail);
+        carInfomationsButton = (Button) findViewById(R.id.carInformationsButton);
 
-        Long entryString = getIntent().getExtras().getLong("entryId");
-        if (!entryString.equals("")) {
-            getDataForCarFromDb(String.valueOf(entryString));
+        entryId = getIntent().getExtras().getLong("entryId");
+        if (!entryId.equals("")) {
+            getDataForCarFromDb(String.valueOf(entryId));
         } else {
             startActivity(new Intent(this, MainActivity.class));
         }
+
+        carInfomationsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(CarDetailActivity.this, CarInformationActivity.class);
+                intent.putExtra("entryId", entryId);
+                startActivity(intent);
+            }
+        });
     }
 
     private void getDataForCarFromDb(String entryString) {
@@ -71,6 +86,7 @@ public class CarDetailActivity extends Activity {
         );
 
         while (cursor.moveToNext()) {
+            // TODO JK zkontrolovat dat.typy
             long itemId = cursor.getLong(cursor.getColumnIndexOrThrow(CarTable._ID));
             String brand = cursor.getString(cursor.getColumnIndexOrThrow(CarTable.COLUMN_NAME_BRAND));
             String model = cursor.getString(cursor.getColumnIndexOrThrow(CarTable.COLUMN_NAME_MODEL));

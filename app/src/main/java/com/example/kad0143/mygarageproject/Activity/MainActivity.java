@@ -12,8 +12,8 @@ import android.widget.ListView;
 
 import com.example.kad0143.mygarageproject.Entity.CarEntity;
 import com.example.kad0143.mygarageproject.DataAdapter.DataAdapter;
-import com.example.kad0143.mygarageproject.Database.CarTable;
-import com.example.kad0143.mygarageproject.Database.SQLiteHelper;
+import com.example.kad0143.mygarageproject.Database.Table.CarTable;
+import com.example.kad0143.mygarageproject.Database.Helper.SQLiteHelper;
 import com.example.kad0143.mygarageproject.Database.DbBitmapUtility;
 import com.example.kad0143.mygarageproject.R;
 
