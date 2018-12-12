@@ -7,7 +7,7 @@
     <ListView
         android:id="@+id/listView1"
         android:layout_width="fill_parent"
-        android:layout_height="477dp">
+        android:layout_height="426dp">
 
     </ListView>
 
@@ -16,5 +16,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Zaparkovat auto" />
+
+    <Button
+        android:id="@+id/settingButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Nastavení" />
 
 </LinearLayout>

@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <SwitchPreference
-        android:defaultValue="true"
-        android:key="notification_preference"
-        android:title="Povolit notifikace" />
+    <EditTextPreference
+        android:defaultValue="5"
+        android:inputType="number"
+        android:key="maxCars"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:summary="Počet aut, které je možno zaparkovat do garáže"
+        android:title="Maximální počet aut v garáži" />
 </PreferenceScreen>

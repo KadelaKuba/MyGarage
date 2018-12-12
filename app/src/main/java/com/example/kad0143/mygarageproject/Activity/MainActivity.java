@@ -2,9 +2,11 @@ package com.example.kad0143.mygarageproject.Activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -22,7 +24,15 @@ import java.util.ArrayList;
 public class MainActivity extends Activity {
 
     ListView lvEntries;
+    Button btnNewEntry;
+
     private ArrayList<CarEntity> scoreRows;
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        showOrHideNewCarButton();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,9 +41,11 @@ public class MainActivity extends Activity {
 
         scoreRows = new ArrayList<CarEntity>();
 
-        Button btnNewEntry = (Button) findViewById(R.id.addCarButton);
+        btnNewEntry = (Button) findViewById(R.id.addCarButton);
         lvEntries = (ListView) findViewById(R.id.listView1);
+
         renderListView();
+        showOrHideNewCarButton();
 
         btnNewEntry.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,13 +65,13 @@ public class MainActivity extends Activity {
             }
         });
 
-//        Button settingsButton = (Button) findViewById(R.id.settingsButton);
-//        settingsButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
-//            }
-//        });
+        Button settingsButton = (Button) findViewById(R.id.settingButton);
+        settingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+            }
+        });
 
     }
 
@@ -104,5 +116,16 @@ public class MainActivity extends Activity {
             scoreRows.add(new CarEntity(itemId, brand, model, year, engine, DbBitmapUtility.getImage(imgByte)));
         }
         cursor.close();
+    }
+
+    private void showOrHideNewCarButton() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        int maxCars = Integer.parseInt(prefs.getString("maxCars", "5"));
+
+        if (scoreRows.size() < maxCars) {
+            btnNewEntry.setVisibility(View.VISIBLE);
+        } else {
+            btnNewEntry.setVisibility(View.INVISIBLE);
+        }
     }
 }
