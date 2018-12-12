@@ -15,7 +15,7 @@ public class CarDetailActivity extends Activity {
     private TextView carYearDetail;
     private TextView carEngineDetail;
     private ImageView carImageDetail;
-    private Car car;
+    private CarEntity car;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +38,7 @@ public class CarDetailActivity extends Activity {
 
     private void getDataForCarFromDb(String entryString) {
 
-        DbHelper mDbHelper = new DbHelper(this);
+        SQLiteHelper mDbHelper = new SQLiteHelper(this);
         // Gets the data repository in write mode
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         // Define a projection that specifies which columns from the database
@@ -71,7 +71,7 @@ public class CarDetailActivity extends Activity {
             String year = cursor.getString(cursor.getColumnIndexOrThrow(CarTable.COLUMN_NAME_YEAR));
             String engine = cursor.getString(cursor.getColumnIndexOrThrow(CarTable.COLUMN_NAME_ENGINE));
             byte[] imgByte = cursor.getBlob(cursor.getColumnIndexOrThrow(CarTable.COLUMN_NAME_IMAGE));
-            car = new Car(itemId, brand, model, year, engine, DbBitmapUtility.getImage(imgByte));
+            car = new CarEntity(itemId, brand, model, year, engine, DbBitmapUtility.getImage(imgByte));
         }
         cursor.close();
 

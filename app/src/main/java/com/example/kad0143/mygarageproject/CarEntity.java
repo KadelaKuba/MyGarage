@@ -2,7 +2,7 @@ package com.example.kad0143.mygarageproject;
 
 import android.graphics.Bitmap;
 
-public class Car {
+public class CarEntity {
     public long id;
     public String brand;
     public String model;
@@ -10,7 +10,7 @@ public class Car {
     public String engine;
     public Bitmap image;
 
-    public Car(long id, String brand, String model, String year, String engine, Bitmap image) {
+    public CarEntity(long id, String brand, String model, String year, String engine, Bitmap image) {
         this.id = id;
         this.brand = brand;
         this.model = model;

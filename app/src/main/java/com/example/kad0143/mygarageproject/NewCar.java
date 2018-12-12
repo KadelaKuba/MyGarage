@@ -5,10 +5,12 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -37,17 +39,21 @@ public class NewCar extends Activity {
     ImageView carImage;
     Button saveCarButton;
     Button uploadImageButton;
+    Spinner spinner;
+    Spinner spinner2;
 
     final int GET_FROM_GALLERY = 1;
     public static Bitmap image;
+    public static boolean isOfflineMode;
 
-    public static ArrayList<CarModel> carModels;
+    public static ArrayList<BrandWithModelsEntity> carModels;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_car);
 
+        // TODO JK - zkontrolovat dat. typy
         brand = (EditText) findViewById(R.id.brandEdit);
         model = (EditText) findViewById(R.id.modelEdit);
         year = (EditText) findViewById(R.id.yearEdit);
@@ -55,10 +61,12 @@ public class NewCar extends Activity {
         carImage = (ImageView) findViewById(R.id.carImage);
         saveCarButton = (Button) findViewById(R.id.saveCarButton);
         uploadImageButton = (Button) findViewById(R.id.uploadImageButton);
+        spinner = (Spinner) findViewById(R.id.spinner);
+        spinner2 = (Spinner) findViewById(R.id.spinner2);
 
-        carModels = new ArrayList<CarModel>();
+        carModels = new ArrayList<BrandWithModelsEntity>();
 
-        new DownloadXmlTask().execute("https://raw.githubusercontent.com/matthlavacka/car-list/master/car-list.json");
+        new DownloadAndParseJson().execute("https://raw.githubusercontent.com/matthlavacka/car-list/master/car-list.json");
 
         uploadImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,21 +75,43 @@ public class NewCar extends Activity {
             }
         });
 
-        Log.d("saving", "funguje to?");
-
         saveCarButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("saving", "clickSave");
-                if (saveToDb(brand.getText().toString(), model.getText().toString(), year.getText().toString(), engine.getText().toString())) {
-                    Toast.makeText(NewCar.this, "Uloženo", Toast.LENGTH_SHORT).show();
-                    Log.d("saving", "OK");
-                    startActivity(new Intent(NewCar.this, MainActivity.class));
+                long carSavedToDb;
+
+                if (isOfflineMode) {
+                    if (TextUtils.isEmpty(year.getText())) {
+                        year.setError("Rok výroby je povinný údaj!");
+                    } else if (TextUtils.isEmpty(engine.getText())) {
+                        engine.setError("Typ motoru je povinný údaj");
+                    } else {
+                        carSavedToDb = saveToDb(brand.getText().toString(), model.getText().toString(), year.getText().toString(), engine.getText().toString(), DbBitmapUtility.getBytes(image));
+
+                        if (carSavedToDb >= 0) {
+                            Toast.makeText(NewCar.this, "Uloženo", Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(NewCar.this, MainActivity.class));
+                        } else {
+                            Toast.makeText(NewCar.this, "Chyba", Toast.LENGTH_SHORT).show();
+                        }
+                    }
                 } else {
-                    Log.d("saving", "chyba");
-                    Toast.makeText(NewCar.this, "Chyba", Toast.LENGTH_SHORT).show();
+                    if (TextUtils.isEmpty(year.getText())) {
+                        year.setError("Year is required!");
+                    } else {
+                        image = ((BitmapDrawable) carImage.getDrawable()).getBitmap();
+                        carSavedToDb = saveToDb(spinner.getSelectedItem().toString(), spinner2.getSelectedItem().toString(), year.getText().toString(), engine.getText().toString(), DbBitmapUtility.getBytes(image));
+
+                        if (carSavedToDb >= 0) {
+                            Toast.makeText(NewCar.this, "Uloženo", Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(NewCar.this, MainActivity.class));
+                        } else {
+                            Toast.makeText(NewCar.this, "Chyba", Toast.LENGTH_SHORT).show();
+                        }
+                    }
                 }
             }
+
         });
     }
 
@@ -89,8 +119,6 @@ public class NewCar extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-
-        //Detects request codes
         if (requestCode == GET_FROM_GALLERY && resultCode == Activity.RESULT_OK) {
             Uri selectedImage = data.getData();
             Bitmap bitmap = null;
@@ -99,21 +127,16 @@ public class NewCar extends Activity {
                 carImage.setImageBitmap(bitmap);
                 image = bitmap;
             } catch (FileNotFoundException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             } catch (IOException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
     }
 
-    private boolean saveToDb(String brand, String model, String year, String engine) {
-        DbHelper mDbHelper = new DbHelper(this);
-        // Gets the data repository in write mode
+    private long saveToDb(String brand, String model, String year, String engine, byte[] image) {
+        SQLiteHelper mDbHelper = new SQLiteHelper(this);
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        // Create a new map of values, where column names are the keys
-
 //        int deletedRows = db.delete(CarTable.TABLE_NAME, null, null);
 
         ContentValues values = new ContentValues();
@@ -121,17 +144,13 @@ public class NewCar extends Activity {
         values.put(CarTable.COLUMN_NAME_MODEL, model);
         values.put(CarTable.COLUMN_NAME_YEAR, year);
         values.put(CarTable.COLUMN_NAME_ENGINE, engine);
-        values.put(CarTable.COLUMN_NAME_IMAGE, DbBitmapUtility.getBytes(image));
+        values.put(CarTable.COLUMN_NAME_IMAGE, image);
 
-        // Insert the new row, returning the primary key value of the new row
-        long neWid = db.insert(CarTable.TABLE_NAME, null, values);
-        Log.d("saving", "savetoDB");
-
-        return true;
+        return db.insert(CarTable.TABLE_NAME, null, values);
     }
 
 
-    private class DownloadXmlTask extends AsyncTask<String, String, String> {
+    private class DownloadAndParseJson extends AsyncTask<String, String, String> {
 
         private String TAG = MainActivity.class.getSimpleName();
         public ArrayList<String> modelList;
@@ -144,34 +163,27 @@ public class NewCar extends Activity {
         @Override
         protected String doInBackground(String... params) {
             HttpHandler sh = new HttpHandler();
-            // Making a request to url and getting response
             String url = "https://raw.githubusercontent.com/matthlavacka/car-list/master/car-list.json";
             String jsonStr = sh.makeServiceCall(url);
 
-            Log.e(TAG, "Response from url: " + jsonStr);
-
             if (jsonStr != null) {
+                isOfflineMode = false;
                 try {
-                    Log.d("kadela", jsonStr);
                     JSONArray jsonArray = new JSONArray(jsonStr);
-
-                    // looping through All Contacts
 
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject c = jsonArray.getJSONObject(i);
                         String brand = c.getString("brand");
 
-                        // Phone node is JSON Object
                         JSONArray models = c.getJSONArray("models");
                         modelList = new ArrayList<String>();
                         for (int j = 0; j < models.length(); j++) {
                             modelList.add(models.getString(j));
                         }
 
-                        CarModel carModel = new CarModel(brand, modelList);
+                        BrandWithModelsEntity carModel = new BrandWithModelsEntity(brand, modelList);
                         carModels.add(carModel);
 
-                        Log.d("sizeKadela", String.valueOf(carModels.size()));
                     }
                 } catch (final JSONException e) {
                     Log.e(TAG, "Json parsing error: " + e.getMessage());
@@ -190,34 +202,39 @@ public class NewCar extends Activity {
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
 
-            final Spinner spinner = (Spinner) findViewById(R.id.spinner);
-            final Spinner spinner2 = (Spinner) findViewById(R.id.spinner2);
+            if (!isOfflineMode && carModels.size() > 0) {
+                final List<String> brands = new ArrayList<String>();
+                for (BrandWithModelsEntity carModel : carModels) {
+                    brands.add(carModel.brand);
+                }
 
-            final List<String> brands = new ArrayList<String>();
-            for (CarModel carModel : carModels) {
-                brands.add(carModel.brand);
+                ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getBaseContext(), android.R.layout.simple_spinner_item, brands);
+                dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
+                spinner.setAdapter(dataAdapter);
+
+                spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                        BrandWithModelsEntity carModel = carModels.get(position);
+
+                        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getBaseContext(), android.R.layout.simple_spinner_item, carModel.models);
+                        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
+                        spinner2.setAdapter(dataAdapter);
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parentView) {
+
+                    }
+
+                });
+            } else {
+                brand.setVisibility(View.VISIBLE);
+                model.setVisibility(View.VISIBLE);
+
+                spinner.setVisibility(View.INVISIBLE);
+                spinner2.setVisibility(View.INVISIBLE);
             }
-
-            ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getBaseContext(), android.R.layout.simple_spinner_item, brands);
-            dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
-            spinner.setAdapter(dataAdapter);
-
-            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                    CarModel carModel = carModels.get(position);
-
-                    ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getBaseContext(), android.R.layout.simple_spinner_item, carModel.models);
-                    dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
-                    spinner2.setAdapter(dataAdapter);
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> parentView) {
-                    // your code here
-                }
-
-            });
         }
     }
 }

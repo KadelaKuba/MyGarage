@@ -1,7 +1,6 @@
 package com.example.kad0143.mygarageproject;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,12 +10,12 @@ import android.widget.TextView;
 
 import java.util.List;
 
-public class DataAdapter extends ArrayAdapter<Car> {
+public class DataAdapter extends ArrayAdapter<CarEntity> {
     private Context context;
     private int layoutResourceId;
-    private List<Car> data = null;
+    private List<CarEntity> data = null;
 
-    public DataAdapter(Context context, int layoutResourceId, List<Car> data) {
+    public DataAdapter(Context context, int layoutResourceId, List<CarEntity> data) {
         super(context, layoutResourceId, data);
         this.layoutResourceId = layoutResourceId;
         this.context = context;
@@ -40,8 +39,7 @@ public class DataAdapter extends ArrayAdapter<Car> {
         } else {
             holder = (EntryHolder) row.getTag();
         }
-        Log.d("kubko", String.valueOf(data.size()));
-        Car entry = data.get(position);
+        CarEntity entry = data.get(position);
         holder.brandText.setText(entry.brand);
         holder.modelText.setText(entry.model);
         holder.yearText.setText(entry.year);
