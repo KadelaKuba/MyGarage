@@ -1,4 +1,4 @@
-package com.example.kad0143.mygarageproject;
+package com.example.kad0143.mygarageproject.Activity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -9,6 +9,13 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+
+import com.example.kad0143.mygarageproject.Entity.CarEntity;
+import com.example.kad0143.mygarageproject.DataAdapter.DataAdapter;
+import com.example.kad0143.mygarageproject.Database.CarTable;
+import com.example.kad0143.mygarageproject.Database.SQLiteHelper;
+import com.example.kad0143.mygarageproject.Database.DbBitmapUtility;
+import com.example.kad0143.mygarageproject.R;
 
 import java.util.ArrayList;
 
@@ -31,7 +38,7 @@ public class MainActivity extends Activity {
         btnNewEntry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, NewCar.class));
+                startActivity(new Intent(MainActivity.this, NewCarActivity.class));
             }
         });
 

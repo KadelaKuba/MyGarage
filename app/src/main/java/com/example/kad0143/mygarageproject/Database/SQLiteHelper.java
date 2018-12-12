@@ -1,4 +1,4 @@
-package com.example.kad0143.mygarageproject;
+package com.example.kad0143.mygarageproject.Database;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

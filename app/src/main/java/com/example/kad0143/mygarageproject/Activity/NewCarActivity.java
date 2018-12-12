@@ -1,4 +1,4 @@
-package com.example.kad0143.mygarageproject;
+package com.example.kad0143.mygarageproject.Activity;
 
 import android.app.Activity;
 import android.content.ContentValues;
@@ -21,6 +21,13 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.kad0143.mygarageproject.Entity.BrandWithModelsEntity;
+import com.example.kad0143.mygarageproject.Database.CarTable;
+import com.example.kad0143.mygarageproject.Database.SQLiteHelper;
+import com.example.kad0143.mygarageproject.Database.DbBitmapUtility;
+import com.example.kad0143.mygarageproject.Network.HttpHandler;
+import com.example.kad0143.mygarageproject.R;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,7 +37,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NewCar extends Activity {
+public class NewCarActivity extends Activity {
 
     EditText brand;
     EditText model;
@@ -89,10 +96,10 @@ public class NewCar extends Activity {
                         carSavedToDb = saveToDb(brand.getText().toString(), model.getText().toString(), year.getText().toString(), engine.getText().toString(), DbBitmapUtility.getBytes(image));
 
                         if (carSavedToDb >= 0) {
-                            Toast.makeText(NewCar.this, "Uloženo", Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(NewCar.this, MainActivity.class));
+                            Toast.makeText(NewCarActivity.this, "Uloženo", Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(NewCarActivity.this, MainActivity.class));
                         } else {
-                            Toast.makeText(NewCar.this, "Chyba", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(NewCarActivity.this, "Chyba", Toast.LENGTH_SHORT).show();
                         }
                     }
                 } else {
@@ -103,10 +110,10 @@ public class NewCar extends Activity {
                         carSavedToDb = saveToDb(spinner.getSelectedItem().toString(), spinner2.getSelectedItem().toString(), year.getText().toString(), engine.getText().toString(), DbBitmapUtility.getBytes(image));
 
                         if (carSavedToDb >= 0) {
-                            Toast.makeText(NewCar.this, "Uloženo", Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(NewCar.this, MainActivity.class));
+                            Toast.makeText(NewCarActivity.this, "Uloženo", Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(NewCarActivity.this, MainActivity.class));
                         } else {
-                            Toast.makeText(NewCar.this, "Chyba", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(NewCarActivity.this, "Chyba", Toast.LENGTH_SHORT).show();
                         }
                     }
                 }
@@ -229,6 +236,7 @@ public class NewCar extends Activity {
 
                 });
             } else {
+                // TODO JK ADD EditText for message
                 brand.setVisibility(View.VISIBLE);
                 model.setVisibility(View.VISIBLE);
 

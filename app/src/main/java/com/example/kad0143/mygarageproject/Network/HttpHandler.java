@@ -1,4 +1,4 @@
-package com.example.kad0143.mygarageproject;
+package com.example.kad0143.mygarageproject.Network;
 
 import android.util.Log;
 

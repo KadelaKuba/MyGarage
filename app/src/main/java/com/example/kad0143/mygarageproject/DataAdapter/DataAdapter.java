@@ -1,4 +1,4 @@
-package com.example.kad0143.mygarageproject;
+package com.example.kad0143.mygarageproject.DataAdapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,6 +7,9 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.example.kad0143.mygarageproject.Entity.CarEntity;
+import com.example.kad0143.mygarageproject.R;
 
 import java.util.List;
 
