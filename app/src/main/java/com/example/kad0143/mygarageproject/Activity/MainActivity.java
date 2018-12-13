@@ -7,6 +7,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -29,7 +32,7 @@ public class MainActivity extends Activity {
     private ArrayList<CarEntity> scoreRows;
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
         showOrHideNewCarButton();
     }
@@ -62,14 +65,6 @@ public class MainActivity extends Activity {
                 long entryId = scoreRows.get(position).id;
                 intent.putExtra("entryId", entryId);
                 startActivity(intent);
-            }
-        });
-
-        Button settingsButton = (Button) findViewById(R.id.settingButton);
-        settingsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
             }
         });
 
@@ -126,6 +121,24 @@ public class MainActivity extends Activity {
             btnNewEntry.setVisibility(View.VISIBLE);
         } else {
             btnNewEntry.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.mainmenu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.settings:
+                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 }
