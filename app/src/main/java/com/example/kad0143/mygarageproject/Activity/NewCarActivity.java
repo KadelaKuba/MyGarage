@@ -88,12 +88,8 @@ public class NewCarActivity extends Activity {
                 long carSavedToDb;
 
                 if (isOfflineMode) {
-                    // TODO JK přidat validaci pro ostatní pole
-                    if (TextUtils.isEmpty(year.getText())) {
-                        year.setError("Rok výroby je povinný údaj!");
-                    } else if (TextUtils.isEmpty(engine.getText())) {
-                        engine.setError("Typ motoru je povinný údaj");
-                    } else {
+                    if (validateOfflineFields()) {
+                        image = ((BitmapDrawable) carImage.getDrawable()).getBitmap();
                         carSavedToDb = saveToDb(brand.getText().toString(), model.getText().toString(), year.getText().toString(), engine.getText().toString(), DbBitmapUtility.getBytes(image));
 
                         if (carSavedToDb >= 0) {
@@ -104,9 +100,8 @@ public class NewCarActivity extends Activity {
                         }
                     }
                 } else {
-                    if (TextUtils.isEmpty(year.getText())) {
-                        year.setError("Year is required!");
-                    } else {
+                    if (validateOnlineFields()) {
+//                        TODO JK zkontrolovat validaci a ukladani!!!
                         image = ((BitmapDrawable) carImage.getDrawable()).getBitmap();
                         carSavedToDb = saveToDb(spinner.getSelectedItem().toString(), spinner2.getSelectedItem().toString(), year.getText().toString(), engine.getText().toString(), DbBitmapUtility.getBytes(image));
 
@@ -157,6 +152,40 @@ public class NewCarActivity extends Activity {
         return db.insert(CarTable.TABLE_NAME, null, values);
     }
 
+    private boolean validateOfflineFields() {
+        if (TextUtils.isEmpty(brand.getText())) {
+            brand.setError("Název značky je povinný údaj");
+            return false;
+        }
+        if (TextUtils.isEmpty(model.getText())) {
+            model.setError("Model značky je povinný údaj");
+            return false;
+        }
+        if (TextUtils.isEmpty(year.getText())) {
+            year.setError("Rok výroby je povinný údaj!");
+            return false;
+        }
+        if (TextUtils.isEmpty(engine.getText())) {
+            engine.setError("Typ motoru je povinný údaj");
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean validateOnlineFields() {
+        if (TextUtils.isEmpty(year.getText())) {
+            year.setError("Rok výroby je povinný údaj!");
+            return false;
+        }
+        if (TextUtils.isEmpty(engine.getText())) {
+            engine.setError("Typ motoru je povinný údaj");
+            return false;
+        }
+
+        return true;
+    }
+
 
     private class DownloadAndParseJson extends AsyncTask<String, String, String> {
 
@@ -171,6 +200,7 @@ public class NewCarActivity extends Activity {
         @Override
         protected String doInBackground(String... params) {
             HttpHandler sh = new HttpHandler();
+//            TODO JK add this link to xml or somewhere??
             String url = "https://raw.githubusercontent.com/matthlavacka/car-list/master/car-list.json";
             String jsonStr = sh.makeServiceCall(url);
 
