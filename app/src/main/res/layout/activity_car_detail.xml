@@ -8,8 +8,8 @@
 
     <LinearLayout
         android:id="@+id/linearLayout"
-        android:layout_width="350dp"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
@@ -26,14 +26,14 @@
         <ImageView
             android:id="@+id/carImageDetail"
             android:layout_width="match_parent"
-            android:layout_height="199dp"
+            android:layout_height="194dp"
             tools:src="@tools:sample/avatars" />
 
         <TextView
             android:id="@+id/textView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="10dp"
             android:paddingLeft="15dp"
             android:text="Značka"
             android:textStyle="bold" />
@@ -87,7 +87,7 @@
             android:id="@+id/carEngineDetail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="80dp"
+            android:layout_marginBottom="20dp"
             android:paddingLeft="15dp" />
 
         <Button
@@ -95,6 +95,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Informace o vozidle"
+            tools:layout_editor_absoluteX="8dp"
+            tools:layout_editor_absoluteY="355dp" />
+
+        <Button
+            android:id="@+id/deleteCarButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Smazat vozidlo"
             tools:layout_editor_absoluteX="8dp"
             tools:layout_editor_absoluteY="355dp" />
 

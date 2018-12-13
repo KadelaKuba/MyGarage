@@ -9,7 +9,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.kad0143.mygarageproject.Database.Table.CarBasicInformationTable;
+import com.example.kad0143.mygarageproject.Database.Table.OwnerDataTable;
 import com.example.kad0143.mygarageproject.Entity.CarEntity;
 import com.example.kad0143.mygarageproject.Database.Table.CarTable;
 import com.example.kad0143.mygarageproject.Database.Helper.SQLiteHelper;
@@ -24,6 +27,7 @@ public class CarDetailActivity extends Activity {
     TextView carEngineDetail;
     ImageView carImageDetail;
     Button carInfomationsButton;
+    Button deleteCarButton;
 
     private CarEntity car;
     private Long entryId;
@@ -39,6 +43,7 @@ public class CarDetailActivity extends Activity {
         carEngineDetail = (TextView) findViewById(R.id.carEngineDetail);
         carImageDetail = (ImageView) findViewById(R.id.carImageDetail);
         carInfomationsButton = (Button) findViewById(R.id.carInformationsButton);
+        deleteCarButton = (Button) findViewById(R.id.deleteCarButton);
 
         entryId = getIntent().getExtras().getLong("entryId");
         if (!entryId.equals("")) {
@@ -55,15 +60,24 @@ public class CarDetailActivity extends Activity {
                 startActivity(intent);
             }
         });
+
+        deleteCarButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (deleteCarFromDb(String.valueOf(entryId))) {
+                    Toast.makeText(v.getContext(), "Auto bylo smazáno", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(CarDetailActivity.this, MainActivity.class));
+                } else {
+                    Toast.makeText(v.getContext(), "Nepodařilo se smazat auto", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     private void getDataForCarFromDb(String entryString) {
-
         SQLiteHelper mDbHelper = new SQLiteHelper(this);
-        // Gets the data repository in write mode
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
-        // Define a projection that specifies which columns from the database
-        // you will actually use after this query.
+
         String[] projection = {
                 CarTable._ID,
                 CarTable.COLUMN_NAME_BRAND,
@@ -72,7 +86,7 @@ public class CarDetailActivity extends Activity {
                 CarTable.COLUMN_NAME_ENGINE,
                 CarTable.COLUMN_NAME_IMAGE
         };
-        // How you want the results sorted in the resulting Cursor
+
         String sortOrder =
                 CarTable.COLUMN_NAME_BRAND + " ASC";
         Cursor cursor = db.query(
@@ -102,5 +116,16 @@ public class CarDetailActivity extends Activity {
         carYearDetail.setText(car.year);
         carEngineDetail.setText(car.engine);
         carImageDetail.setImageBitmap(car.image);
+    }
+
+
+    private boolean deleteCarFromDb(String entryString) {
+        SQLiteHelper mDbHelper = new SQLiteHelper(this);
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+        db.delete(CarBasicInformationTable.TABLE_NAME, CarBasicInformationTable.COLUMN_NAME_CAR_ID + "=" + entryString, null);
+        db.delete(OwnerDataTable.TABLE_NAME, OwnerDataTable.COLUMN_NAME_CAR_ID + "=" + entryString, null);
+
+        return db.delete(CarTable.TABLE_NAME, CarTable._ID + "=" + entryString, null) > 0;
     }
 }
