@@ -120,10 +120,7 @@ public class CarInformationActivity extends Activity {
     private void getCarInformationsFromDb(Long entryString) {
 
         SQLiteHelper mDbHelper = new SQLiteHelper(this);
-        // Gets the data repository in write mode
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
-        // Define a projection that specifies which columns from the database
-        // you will actually use after this query.
         String[] projection = {
                 CarBasicInformationTable._ID,
                 CarBasicInformationTable.COLUMN_NAME_CAR_ID,
@@ -132,7 +129,6 @@ public class CarInformationActivity extends Activity {
                 CarBasicInformationTable.COLUMN_NAME_STK_VALIDITY,
                 CarBasicInformationTable.COLUMN_NAME_DOCTOR_VALIDITY
         };
-        // How you want the results sorted in the resulting Cursor
         String sortOrder =
                 CarBasicInformationTable._ID + " DESC";
         Cursor cursor = db.query(
@@ -163,13 +159,9 @@ public class CarInformationActivity extends Activity {
         doctorValidity.setText(carInformation.doctorValidity);
     }
 
-    // TODO JK zkusit  sloucit s funcki nad, getCarInformationsFromDb()
     private boolean hasCarSomeInformations(Long entryString) {
         SQLiteHelper mDbHelper = new SQLiteHelper(this);
-        // Gets the data repository in write mode
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
-        // Define a projection that specifies which columns from the database
-        // you will actually use after this query.
         String[] projection = {
                 CarBasicInformationTable.COLUMN_NAME_CAR_ID,
         };
@@ -194,10 +186,7 @@ public class CarInformationActivity extends Activity {
     private void getOwnerDataFromDb(Long entryString) {
 
         SQLiteHelper mDbHelper = new SQLiteHelper(this);
-        // Gets the data repository in write mode
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
-        // Define a projection that specifies which columns from the database
-        // you will actually use after this query.
         String[] projection = {
                 OwnerDataTable._ID,
                 OwnerDataTable.COLUMN_NAME_CAR_ID,
@@ -207,7 +196,6 @@ public class CarInformationActivity extends Activity {
                 OwnerDataTable.COLUMN_NAME_CITY,
                 OwnerDataTable.COLUMN_NAME_POSTCODE
         };
-        // How you want the results sorted in the resulting Cursor
         String sortOrder =
                 OwnerDataTable._ID + " DESC";
         Cursor cursor = db.query(
@@ -240,13 +228,9 @@ public class CarInformationActivity extends Activity {
         postcode.setText(ownerData.postcode);
     }
 
-    // TODO JK zkusit  sloucit s funcki nad, getCarInformationsFromDb()
     private boolean hasCarSomeOwnerData(Long entryString) {
         SQLiteHelper mDbHelper = new SQLiteHelper(this);
-        // Gets the data repository in write mode
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
-        // Define a projection that specifies which columns from the database
-        // you will actually use after this query.
         String[] projection = {
                 OwnerDataTable.COLUMN_NAME_CAR_ID,
         };

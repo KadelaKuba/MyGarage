@@ -100,7 +100,6 @@ public class CarDetailActivity extends Activity {
         );
 
         while (cursor.moveToNext()) {
-            // TODO JK zkontrolovat dat.typy
             long itemId = cursor.getLong(cursor.getColumnIndexOrThrow(CarTable._ID));
             String brand = cursor.getString(cursor.getColumnIndexOrThrow(CarTable.COLUMN_NAME_BRAND));
             String model = cursor.getString(cursor.getColumnIndexOrThrow(CarTable.COLUMN_NAME_MODEL));

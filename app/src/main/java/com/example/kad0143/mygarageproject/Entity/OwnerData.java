@@ -9,7 +9,6 @@ public class OwnerData {
     public String city;
     public String postcode;
 
-    // TODO JK UDELAT gettery radsi???
     public OwnerData(long id, String carId, String name, String phone, String street, String city, String postcode) {
         this.id = id;
         this.carId = carId;

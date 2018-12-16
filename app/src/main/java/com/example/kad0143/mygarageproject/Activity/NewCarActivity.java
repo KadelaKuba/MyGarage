@@ -60,7 +60,6 @@ public class NewCarActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_car);
 
-        // TODO JK - zkontrolovat dat. typy
         brand = (EditText) findViewById(R.id.brandEdit);
         model = (EditText) findViewById(R.id.modelEdit);
         year = (EditText) findViewById(R.id.yearEdit);
@@ -101,7 +100,6 @@ public class NewCarActivity extends Activity {
                     }
                 } else {
                     if (validateOnlineFields()) {
-//                        TODO JK zkontrolovat validaci a ukladani!!!
                         image = ((BitmapDrawable) carImage.getDrawable()).getBitmap();
                         carSavedToDb = saveToDb(spinner.getSelectedItem().toString(), spinner2.getSelectedItem().toString(), year.getText().toString(), engine.getText().toString(), DbBitmapUtility.getBytes(image));
 
@@ -200,7 +198,6 @@ public class NewCarActivity extends Activity {
         @Override
         protected String doInBackground(String... params) {
             HttpHandler sh = new HttpHandler();
-//            TODO JK add this link to xml or somewhere??
             String url = "https://raw.githubusercontent.com/matthlavacka/car-list/master/car-list.json";
             String jsonStr = sh.makeServiceCall(url);
 
@@ -229,6 +226,7 @@ public class NewCarActivity extends Activity {
                 }
 
             } else {
+                isOfflineMode = true;
                 Log.e(TAG, "Couldn't get json from server.");
             }
 
@@ -267,7 +265,6 @@ public class NewCarActivity extends Activity {
 
                 });
             } else {
-                // TODO JK ADD EditText for message
                 brand.setVisibility(View.VISIBLE);
                 model.setVisibility(View.VISIBLE);
 
